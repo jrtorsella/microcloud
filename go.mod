@@ -81,3 +81,5 @@ require (
 	golang.org/x/term v0.45.0 // indirect
 	golang.org/x/text v0.41.0 // indirect
 )
+
+replace github.com/canonical/microcluster/v3 => github.com/jrtorsella/microcluster/v3 v3.1.1-0.20260924140056-5c85c014daed

@@ -16,8 +16,6 @@ github.com/canonical/lxd v0.0.0-20260819073254-927b66615d6b h1:/OPdhha3j1vL0HW3S
 github.com/canonical/lxd v0.0.0-20260819073254-927b66615d6b/go.mod h1:wRwxpV79msqvvdmmrYRy9O/c3u7hn2Ye7K6HeU0cJeo=
 github.com/canonical/microceph/microceph v0.0.0-20260819084436-8360d6da6e60 h1:J2VcIHumDfkPSeDDeyDxWia6nxdvH5ozX8OJXod8xKo=
 github.com/canonical/microceph/microceph v0.0.0-20260819084436-8360d6da6e60/go.mod h1:Wjbg8ncgOsZbOWlW4mRvIfUGw3o8ei+eui0ahibIYAY=
-github.com/canonical/microcluster/v3 v3.1.1 h1:6UF1jk0hNQFeLMFrE7F2hMFJ+LCkza+CuQXQbjkQVX0=
-github.com/canonical/microcluster/v3 v3.1.1/go.mod h1:kXWVN226nQ75SiBJzxM0/+9AGDvvdu4aYnDPzCz0mMI=
 github.com/canonical/microovn/microovn v0.0.0-20260722141720-f86e1cd3a8f3 h1:q3EYkRGF/El6p2wgJdlYhfZwNDekkXI9RWJxb+2vw8g=
 github.com/canonical/microovn/microovn v0.0.0-20260722141720-f86e1cd3a8f3/go.mod h1:CNuq7WwiH+YcCwjPsYDew/gedrjVT1ebCwwnUSVGuVU=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
@@ -82,6 +80,8 @@ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/jeremija/gosubmit v0.2.8 h1:mmSITBz9JxVtu8eqbN+zmmwX7Ij2RidQxhcwRVI4wqA=
 github.com/jeremija/gosubmit v0.2.8/go.mod h1:Ui+HS073lCFREXBbdfrJzMB57OI/bdxTiLtrDHHhFPI=
+github.com/jrtorsella/microcluster/v3 v3.1.1-0.20260924140056-5c85c014daed h1:xJ0PIj9HpcyEou+d+/ldCPtvpDua9eFyWxF8YJG0ugw=
+github.com/jrtorsella/microcluster/v3 v3.1.1-0.20260924140056-5c85c014daed/go.mod h1:kXWVN226nQ75SiBJzxM0/+9AGDvvdu4aYnDPzCz0mMI=
 github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 h1:Z9n2FFNUXsshfwJMBgNA0RU6/i7WVaAegv3PtuIHPMs=
 github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51/go.mod h1:CzGEWj7cYgsdH8dAjBGEr58BoE7ScuLd+fwFZ44+/x8=
 github.com/kr/fs v0.1.0 h1:Jskdu9ieNAYnjxsi0LbQp1ulIKZV1LAFgK1tWhpZgl8=
