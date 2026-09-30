@@ -83,3 +83,5 @@ require (
 )
 
 replace github.com/canonical/microcluster/v3 => github.com/jrtorsella/microcluster/v3 v3.1.1-0.20260927205033-73efb60ff6e5
+
+replace github.com/canonical/go-dqlite/v3 => github.com/jrtorsella/go-dqlite/v3 v3.0.5-0.20260930131347-3aca2b31a8d3
