@@ -1,10 +1,15 @@
 package main
 
 import (
+	"context"
+	"crypto/x509"
+	"fmt"
+	"sync"
 	"testing"
 
 	lxdAPI "github.com/canonical/lxd/shared/api"
 
+	"github.com/canonical/microcloud/microcloud/api/types"
 	"github.com/canonical/microcloud/microcloud/multicast"
 	"github.com/canonical/microcloud/microcloud/service"
 )
@@ -224,5 +229,105 @@ func TestValidateSystemsMultiSystem(t *testing.T) {
 	err = cfg.validateSystems(handler)
 	if err == nil {
 		t.Fatalf("sys4 with conflicting management IP and ipv6.ovn.ranges passed validation")
+	}
+}
+
+// tokenTestService is a service that records the tokens it issues.
+type tokenTestService struct {
+	service.Service
+
+	serviceType types.ServiceType
+	issue       func(serviceType types.ServiceType, peer string)
+}
+
+func (s *tokenTestService) Type() types.ServiceType {
+	return s.serviceType
+}
+
+func (s *tokenTestService) IssueToken(ctx context.Context, peer string) (string, error) {
+	s.issue(s.serviceType, peer)
+	return fmt.Sprintf("%s-%s", s.serviceType, peer), nil
+}
+
+func TestAddPeersIssuesTokensBeforeEachJoin(t *testing.T) {
+	serviceTypes := []types.ServiceType{types.MicroCloud, types.LXD, types.MicroCeph, types.MicroOVN}
+	peers := []string{"peer1", "peer2", "peer3", "peer4", "peer5"}
+
+	mu := sync.Mutex{}
+	issued := map[string]int{}
+	joined := map[string]bool{}
+
+	handler := &service.Handler{Name: "local", Services: map[types.ServiceType]service.Service{}}
+	for _, serviceType := range serviceTypes {
+		handler.Services[serviceType] = &tokenTestService{
+			serviceType: serviceType,
+			issue: func(serviceType types.ServiceType, peer string) {
+				mu.Lock()
+				defer mu.Unlock()
+
+				if joined[peer] {
+					t.Errorf("Issued %s token for peer %q after it joined", serviceType, peer)
+				}
+
+				issued[peer]++
+			},
+		}
+	}
+
+	// The local system has bootstrapped every service, and the peers have already joined MicroCloud.
+	localServices := map[types.ServiceType]map[string]string{}
+	for _, serviceType := range serviceTypes {
+		localServices[serviceType] = map[string]string{"local": "10.0.0.1"}
+	}
+
+	cfg := initConfig{
+		systems: map[string]InitSystem{"local": {ServerInfo: multicast.ServerInfo{Name: "local", Address: "10.0.0.1"}}},
+		state:   map[string]service.SystemInformation{"local": {ExistingServices: localServices}},
+	}
+
+	for i, peer := range peers {
+		address := fmt.Sprintf("10.0.0.%d", i+2)
+		localServices[types.MicroCloud][peer] = address
+		cfg.systems[peer] = InitSystem{ServerInfo: multicast.ServerInfo{Name: peer, Address: address}}
+	}
+
+	oldJoinPeer := joinPeer
+	t.Cleanup(func() { joinPeer = oldJoinPeer })
+	joinPeer = func(sh *service.Handler, clusterSizes map[types.ServiceType]int, peer string, cert *x509.Certificate, cfg types.ServicesPut) error {
+		mu.Lock()
+		defer mu.Unlock()
+
+		if len(cfg.Tokens) != len(serviceTypes)-1 {
+			t.Errorf("Peer %q joined with %d tokens, expected %d", peer, len(cfg.Tokens), len(serviceTypes)-1)
+		}
+
+		// Only the joining peer and the peers that already joined may have tokens.
+		for tokenPeer := range issued {
+			if tokenPeer != peer && !joined[tokenPeer] {
+				t.Errorf("Token for peer %q was issued before peer %q joined", tokenPeer, peer)
+			}
+		}
+
+		joined[peer] = true
+		return nil
+	}
+
+	_, err := cfg.addPeers(handler)
+	if err != nil {
+		t.Fatalf("Failed to add peers: %v", err)
+	}
+
+	for _, peer := range peers {
+		if !joined[peer] {
+			t.Errorf("Peer %q did not join", peer)
+		}
+
+		if issued[peer] != len(serviceTypes)-1 {
+			t.Errorf("Issued %d tokens for peer %q, expected %d", issued[peer], peer, len(serviceTypes)-1)
+		}
+	}
+
+	if joined["local"] || issued["local"] != 0 {
+		t.Errorf("Local system should not join or receive tokens")
 	}
 }
