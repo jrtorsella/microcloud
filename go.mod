@@ -82,6 +82,6 @@ require (
 	golang.org/x/text v0.41.0 // indirect
 )
 
-replace github.com/canonical/microcluster/v3 => github.com/jrtorsella/microcluster/v3 v3.1.1-0.20260930142417-0e4402155023
+replace github.com/canonical/microcluster/v3 => github.com/jrtorsella/microcluster/v3 v3.1.1-0.20261003233645-b89a9b34e6f2
 
 replace github.com/canonical/go-dqlite/v3 => github.com/jrtorsella/go-dqlite/v3 v3.0.5-0.20260930131347-3aca2b31a8d3
